@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhi.shop.dao.UserDao">
+
+    <resultMap type="com.zhi.shop.entity.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="isAdmin" column="isAdmin" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="studentId" column="studentId" jdbcType="VARCHAR"/>
+        <result property="idCard" column="idCard" jdbcType="VARCHAR"/>
+        <result property="user" column="user" jdbcType="VARCHAR"/>
+        <result property="pwd" column="pwd" jdbcType="VARCHAR"/>
+        <result property="tel" column="tel" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+          user.id, user.name, user.studentId, user.idCard, user.user, user.pwd,user.tel,user.isAdmin
+        from javashop.user
+        where id = #{id}
+    </select>
+
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+          user.id, user.name, user.studentId, user.idCard, user.user,user.tel, user.isAdmin,user.pwd,count(*) as total
+
+        from javashop.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        user.id, user.name, user.studentId, user.idCard, user.user, user.pwd,user.tel,user.isAdmin
+        from javashop.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="studentId != null and studentId != ''">
+                and studentId = #{studentId}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and idCard = #{idCard}
+            </if>
+            <if test="user != null and user != ''">
+                and user = #{user}
+            </if>
+            <if test="pwd != null and pwd != ''">
+                and pwd = #{pwd}
+            </if>
+            <if test="isAdmin != null and isAdmin != ''">
+                and isAdmin = #{isAdmin}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into javashop.user(name, idCard, user, pwd,studentId,tel)
+        values (#{name}, #{idCard}, #{user}, #{pwd},#{studentId},#{tel})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update javashop.user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="idCard != null and idCard != ''">
+                idCard = #{idCard},
+            </if>
+            <if test="user != null and user != ''">
+                user = #{user},
+            </if>
+            <if test="pwd != null and pwd != ''">
+                pwd = #{pwd},
+            </if>
+            <if test="studentId != null and studentId != ''">
+                studentId = #{studentId},
+            </if>
+            <if test="tel != null and tel != ''">
+                tel = #{tel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from javashop.user where id = #{id}
+    </delete>
+
+</mapper>

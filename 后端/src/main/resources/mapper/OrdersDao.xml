@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhi.shop.dao.OrdersDao">
+
+    <resultMap type="com.zhi.shop.entity.Orders" id="OrdersMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="goodsName" column="goodsName" jdbcType="VARCHAR"/>
+        <result property="img" column="img" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="INTEGER"/>
+        <result property="sumPrice" column="sumPrice" jdbcType="NUMERIC"/>
+        <result property="sum" column="sum" jdbcType="INTEGER"/>
+        <result property="time" column="time" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="orderNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrdersMap">
+        select
+          orders.id, orders.goodsName, orders.img, orders.userId, orders.sumPrice, orders.sum, orders.time,orders.orderNo
+        from javashop.orders
+        where id = #{id}
+    </select>
+
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrdersMap">
+        select
+          orders.id, orders.goodsName, orders.img, orders.userId,orders.orderNo, orders.sumPrice, orders.sum, orders.time,count(*) as total
+
+        from javashop.orders
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultType="java.util.Map">
+        select
+        user.name as userName,orders.id, orders.goodsName, orders.img, orders.userId, orders.sumPrice, orders.sum,
+        orders.orderNo,orders.time
+        from javashop.orders
+        LEFT JOIN user on user.id=orders.userId
+        <where>
+            <if test="id != null">
+                and orders.id = #{id}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and orders.goodsName = #{goodsName}
+            </if>
+            <if test="img != null and img != ''">
+                and orders.img = #{img}
+            </if>
+            <if test="userId != null">
+                and orders.userId = #{userId}
+            </if>
+            <if test="sumPrice != null">
+                and orders.sumPrice = #{sumPrice}
+            </if>
+            <if test="sum != null">
+                and orders.sum = #{sum}
+            </if>
+            <if test="time != null and time != ''">
+                and orders.time = #{time}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into javashop.orders(goodsName, img, sum, time,userId,sumPrice,orderNo)
+        values (#{goodsName}, #{img}, #{sum}, #{time},#{userId},#{sumPrice},#{orderNo})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update javashop.orders
+        <set>
+            <if test="goodsName != null and goodsName != ''">
+                goodsName = #{goodsName},
+            </if>
+            <if test="img != null and img != ''">
+                img = #{img},
+            </if>
+            <if test="sum != null">
+                sum = #{sum},
+            </if>
+            <if test="time != null and time != ''">
+                time = #{time},
+            </if>
+            <if test="userId != null and userId != ''">
+                userId = #{userId},
+            </if>
+            <if test="sumPrice != null and sumPrice != ''">
+                sumPrice = #{sumPrice},
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                orderNo = #{orderNo},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from javashop.orders where id = #{id}
+    </delete>
+
+</mapper>

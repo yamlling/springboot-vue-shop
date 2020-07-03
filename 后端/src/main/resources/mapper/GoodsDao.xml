@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhi.shop.dao.GoodsDao">
+
+    <resultMap type="com.zhi.shop.entity.Goods" id="GoodsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="userId" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="img" column="img" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="cateId" column="cateId" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="num" column="num" jdbcType="INTEGER"/>
+        <result property="time" column="time" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById"  resultType="java.util.Map">
+        select
+          cate.name as cateName,goods.id, goods.userId, goods.name, goods.img, goods.content, goods.cateId, goods.price, goods.num, goods.time
+        from javashop.goods
+        LEFT JOIN cate on cate.id=goods.cateId
+        where goods.id = #{id}
+    </select>
+
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GoodsMap">
+        select
+          goods.id, goods.userId, goods.name, goods.img, goods.content, goods.cateId, goods.price, goods.num, goods.time,count(*) as total
+
+        from javashop.goods
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultType="java.util.Map">
+        select
+        cate.name as cateName,goods.id, goods.userId, goods.name, goods.img, goods.content, goods.cateId, goods.price,
+        goods.num, goods.time
+        from javashop.goods
+        LEFT JOIN cate on cate.id=goods.cateId
+        <where>
+            <if test="id != null">
+                and goods.id = #{id}
+            </if>
+            <if test="userId != null">
+                and goods.userId = #{userId}
+            </if>
+            <if test="name != null and name != ''">
+                and goods.name = #{name}
+            </if>
+            <if test="img != null and img != ''">
+                and goods.img = #{img}
+            </if>
+            <if test="content != null and content != ''">
+                and goods.content = #{content}
+            </if>
+            <if test="cateId != null">
+                and goods.cateId = #{cateId}
+            </if>
+            <if test="price != null">
+                and goods.price = #{price}
+            </if>
+            <if test="num != null">
+                and goods.num = #{num}
+            </if>
+            <if test="time != null and time != ''">
+                and goods.time = #{time}
+            </if>
+            and goods.num != 0
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into javashop.goods(name, img, content, cateId, price, num, time,userId)
+        values (#{name}, #{img}, #{content}, #{cateId}, #{price}, #{num}, #{time},#{userId})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update javashop.goods
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="img != null and img != ''">
+                img = #{img},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="cateId != null">
+                cateId = #{cateId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="time != null and time != ''">
+                time = #{time},
+            </if>
+            <if test="userId != null and userId != ''">
+                userId = #{userId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from javashop.goods where id = #{id}
+    </delete>
+
+</mapper>
